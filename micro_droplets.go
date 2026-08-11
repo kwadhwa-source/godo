@@ -53,6 +53,10 @@ const (
 	MicroDropletCheckpointStatusAvailable = MicroDropletCheckpointStatus("CHECKPOINT_AVAILABLE")
 	MicroDropletCheckpointStatusFailed    = MicroDropletCheckpointStatus("CHECKPOINT_FAILED")
 	MicroDropletCheckpointStatusDeleted   = MicroDropletCheckpointStatus("CHECKPOINT_DELETED")
+	// MicroDropletCheckpointStatusDeleting means deletion was requested and the
+	// checkpoint's stored state is being released. The checkpoint stops being
+	// returned once that finishes.
+	MicroDropletCheckpointStatusDeleting = MicroDropletCheckpointStatus("CHECKPOINT_DELETING")
 )
 
 // MicroDropletsService is an interface for interfacing with the MicroDroplet
@@ -68,6 +72,7 @@ type MicroDropletsService interface {
 	Resume(ctx context.Context, id string) (*MicroDroplet, *Response, error)
 	Delete(ctx context.Context, id string) (*Response, error)
 	ListCheckpoints(ctx context.Context, id string, opt *ListOptions) ([]MicroDropletCheckpoint, *Response, error)
+	DeleteCheckpoint(ctx context.Context, id, checkpointID string) (*Response, error)
 }
 
 // MicroDropletsServiceOp handles communication with the MicroDroplet related
@@ -355,4 +360,31 @@ func (s *MicroDropletsServiceOp) ListCheckpoints(ctx context.Context, id string,
 	}
 
 	return root.Checkpoints, resp, nil
+}
+
+// DeleteCheckpoint releases the state stored by one of a MicroDroplet's
+// checkpoints. The DigitalOcean API returns a 204 on success and does not
+// include a response body.
+//
+// Deletion is asynchronous: the checkpoint reports CHECKPOINT_DELETING until
+// its stored state has been released, then stops being returned. A checkpoint
+// outlives the MicroDroplet it was captured from, so it can be deleted after
+// that MicroDroplet is gone, and a MicroDroplet already restored from it is
+// unaffected.
+func (s *MicroDropletsServiceOp) DeleteCheckpoint(ctx context.Context, id, checkpointID string) (*Response, error) {
+	if id == "" {
+		return nil, NewArgError("id", "cannot be empty")
+	}
+	if checkpointID == "" {
+		return nil, NewArgError("checkpointID", "cannot be empty")
+	}
+
+	path := fmt.Sprintf("%s/%s/checkpoints/%s", microDropletBasePath, id, checkpointID)
+
+	req, err := s.client.NewRequest(ctx, http.MethodDelete, path, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.client.Do(ctx, req, nil)
 }

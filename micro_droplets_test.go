@@ -426,6 +426,41 @@ func TestMicroDroplets_ListCheckpoints_EmptyID(t *testing.T) {
 	}
 }
 
+func TestMicroDroplets_DeleteCheckpoint(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/microdroplets/instances/aaa-111/checkpoints/chk-1", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, http.MethodDelete)
+		w.WriteHeader(http.StatusNoContent)
+	})
+
+	if _, err := client.MicroDroplets.DeleteCheckpoint(ctx, "aaa-111", "chk-1"); err != nil {
+		t.Fatalf("MicroDroplets.DeleteCheckpoint returned error: %v", err)
+	}
+}
+
+func TestMicroDroplets_DeleteCheckpoint_EmptyID(t *testing.T) {
+	for _, tt := range []struct {
+		name         string
+		id           string
+		checkpointID string
+	}{
+		{name: "empty micro droplet id", id: "", checkpointID: "chk-1"},
+		{name: "empty checkpoint id", id: "aaa-111", checkpointID: ""},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := (&MicroDropletsServiceOp{}).DeleteCheckpoint(ctx, tt.id, tt.checkpointID)
+			if err == nil {
+				t.Fatal("expected error for empty id")
+			}
+			if _, ok := err.(*ArgError); !ok {
+				t.Errorf("expected *ArgError, got %T: %v", err, err)
+			}
+		})
+	}
+}
+
 func TestMicroDroplet_URN(t *testing.T) {
 	md := MicroDroplet{ID: "aaa-111"}
 	want := "do:microdroplet:aaa-111"
