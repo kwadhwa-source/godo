@@ -54,59 +54,60 @@ type Client struct {
 	ratemtx sync.Mutex
 
 	// Services used for communicating with the API
-	Account             AccountService
-	Actions             ActionsService
-	Apps                AppsService
-	Balance             BalanceService
-	BillingHistory      BillingHistoryService
-	CDNs                CDNService
-	Certificates        CertificatesService
-	Databases           DatabasesService
-	Domains             DomainsService
-	Droplets            DropletsService
-	DropletActions      DropletActionsService
-	DropletAutoscale    DropletAutoscaleService
-	VPCNATGateways      VPCNATGatewaysService
-	Firewalls           FirewallsService
-	FloatingIPs         FloatingIPsService
-	FloatingIPActions   FloatingIPActionsService
-	Functions           FunctionsService
-	Images              ImagesService
-	ImageActions        ImageActionsService
-	Invoices            InvoicesService
-	Keys                KeysService
-	Kubernetes          KubernetesService
-	LoadBalancers       LoadBalancersService
-	MicroDroplets       MicroDropletsService
-	MicroDropletImages  MicroDropletImagesService
-	Monitoring          MonitoringService
-	Security            SecurityService
-	Secrets             SecretsService
-	Nfs                 NfsService
-	NfsActions          NfsActionsService
-	OneClick            OneClickService
-	Projects            ProjectsService
-	Regions             RegionsService
-	Registry            RegistryService
-	Registries          RegistriesService
-	ReservedIPs         ReservedIPsService
-	ReservedIPV6s       ReservedIPV6sService
-	ReservedIPActions   ReservedIPActionsService
-	ReservedIPV6Actions ReservedIPV6ActionsService
-	Sizes               SizesService
-	Snapshots           SnapshotsService
-	SpacesKeys          SpacesKeysService
-	Storage             StorageService
-	StorageActions      StorageActionsService
-	Tags                TagsService
-	UptimeChecks        UptimeChecksService
-	VectorDBs           VectorDBsService
-	VPCs                VPCsService
-	PartnerAttachment   PartnerAttachmentService
-	GradientAI          GradientAIService
-	DedicatedInference  DedicatedInferenceService
-	BatchInference      BatchInferenceService
-	BYOIPPrefixes       BYOIPPrefixesService
+	Account                 AccountService
+	Actions                 ActionsService
+	Apps                    AppsService
+	Balance                 BalanceService
+	BillingHistory          BillingHistoryService
+	CDNs                    CDNService
+	Certificates            CertificatesService
+	Databases               DatabasesService
+	Domains                 DomainsService
+	Droplets                DropletsService
+	DropletActions          DropletActionsService
+	DropletAutoscale        DropletAutoscaleService
+	VPCNATGateways          VPCNATGatewaysService
+	Firewalls               FirewallsService
+	FloatingIPs             FloatingIPsService
+	FloatingIPActions       FloatingIPActionsService
+	Functions               FunctionsService
+	Images                  ImagesService
+	ImageActions            ImageActionsService
+	Invoices                InvoicesService
+	Keys                    KeysService
+	Kubernetes              KubernetesService
+	LoadBalancers           LoadBalancersService
+	MicroDroplets           MicroDropletsService
+	MicroDropletImages      MicroDropletImagesService
+	MicroDropletCheckpoints MicroDropletCheckpointsService
+	Monitoring              MonitoringService
+	Security                SecurityService
+	Secrets                 SecretsService
+	Nfs                     NfsService
+	NfsActions              NfsActionsService
+	OneClick                OneClickService
+	Projects                ProjectsService
+	Regions                 RegionsService
+	Registry                RegistryService
+	Registries              RegistriesService
+	ReservedIPs             ReservedIPsService
+	ReservedIPV6s           ReservedIPV6sService
+	ReservedIPActions       ReservedIPActionsService
+	ReservedIPV6Actions     ReservedIPV6ActionsService
+	Sizes                   SizesService
+	Snapshots               SnapshotsService
+	SpacesKeys              SpacesKeysService
+	Storage                 StorageService
+	StorageActions          StorageActionsService
+	Tags                    TagsService
+	UptimeChecks            UptimeChecksService
+	VectorDBs               VectorDBsService
+	VPCs                    VPCsService
+	PartnerAttachment       PartnerAttachmentService
+	GradientAI              GradientAIService
+	DedicatedInference      DedicatedInferenceService
+	BatchInference          BatchInferenceService
+	BYOIPPrefixes           BYOIPPrefixesService
 
 	// Serverless Inference resources at https://inference.do-ai.run.
 	Chat             *ChatService
@@ -323,6 +324,7 @@ func NewClient(httpClient *http.Client) *Client {
 	c.LoadBalancers = &LoadBalancersServiceOp{client: c}
 	c.MicroDroplets = &MicroDropletsServiceOp{client: c}
 	c.MicroDropletImages = &MicroDropletImagesServiceOp{client: c}
+	c.MicroDropletCheckpoints = &MicroDropletCheckpointsServiceOp{client: c}
 	c.Monitoring = &MonitoringServiceOp{client: c}
 	c.Security = &SecurityServiceOp{client: c}
 	c.Secrets = &SecretsServiceOp{client: c}
